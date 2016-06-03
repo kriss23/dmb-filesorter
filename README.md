@@ -1,4 +1,9 @@
-# Deutsche Mailbox dmb File sorter
+# Deutsche Mailbox dmb File Sorter
+
+Toot to make sure that data uploaded by the EPG data provider "dmb GmbH Deutsche Mailbox" is only kept
+until is getting older than 1 Week.
+
+This prevents the XML upload directory from getting overcrowded with outdated EPG data.
 
 ## Setup
 ```
