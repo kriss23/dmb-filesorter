@@ -38,7 +38,7 @@ def is_file_containing_only_content_older_than(xml_file, start_datetime):
         # print ("        found newest broadcast to end at: %s" % newest_broadcast_stop_time)
         return newest_broadcast_stop_time < start_datetime
     else:
-        return false  # if not found at all we can ignore the file
+        return False  # if not found at all we can ignore the file
 
 
 def copy_old_files(start_datetime):

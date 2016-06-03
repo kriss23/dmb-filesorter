@@ -7,7 +7,7 @@ This prevents the XML upload directory from getting overcrowded with outdated EP
 
 ## Setup
 ```
-git co <repo>
+git clone <repo>
 ```
 
 ## Usage
