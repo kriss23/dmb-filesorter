@@ -53,7 +53,7 @@ def copy_or_move_files(file_list, start_datetime, is_simulation_run, is_moving_f
     if not os.path.exists(target_directory_name):
         os.makedirs(target_directory_name)
 
-    # move of copy files
+    # move or copy files
     for file in file_list:
         if is_moving_files:
             shutil.move(os.path.join(source_directory_name, file),
