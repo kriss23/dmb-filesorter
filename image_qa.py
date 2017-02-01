@@ -89,7 +89,7 @@ def get_epg_listing(broadcaster_ID):
                 sys.stdout.flush()
                 pass
             else:
-                print('\nMissing! ' + broadcast['teaserImageUrl'] + ' HTTP Status Code: ' + status_code)
+                print('\nMissing! ' + broadcast['teaserImageUrl'] + ' HTTP Status Code: ' + str(status_code))
 
         elif not broadcast.has_key('teaserImageUrl'):
             print "HERE-13"
