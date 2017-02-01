@@ -55,7 +55,11 @@ def get_epg_listing(broadcaster_ID):
             get_epg_listing(broadcaster['epgId'])
             # time.sleep(60 * 5)
     else:
-        images_listing_json = urllib.urlopen(EPG_REQUEST_URL % broadcaster_ID).read()
+        try:
+            images_listing_json = urllib.urlopen(EPG_REQUEST_URL % broadcaster_ID).read()
+        except IOError:
+            print "ERROR opening ", EPG_REQUEST_URL % broadcaster_ID
+            return
         # print "Got broadcasts from", EPG_REQUEST_URL % broadcaster_ID
         images_listing_json = json.loads(images_listing_json)
 
