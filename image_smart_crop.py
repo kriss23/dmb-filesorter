@@ -39,7 +39,7 @@ def smart_crop_image(image_dir, input_filename, image_hash_filename, use_16x9=Fa
 
     if os.path.isfile(output_filename_path):
         print "Success"
-    elif not use_16x9::
+    elif not use_16x9:
         print "File Missing:", output_filename_path,
         print "retrying with 16/9 version"
         smart_crop_image(image_dir, input_filename, image_hash_filename, use_16x9=True)
@@ -101,7 +101,8 @@ def get_epg_listing(broadcaster_ID, image_dir):
         image_url = broadcast['teaserImageUrl']
         image_filename = get_filename_from_URL(image_url)
         image_hash_filename = rename_to_hash(image_url)
-        smart_crop_image(image_dir, image_filename, image_hash_filename)
+        print 'broadcaster id', broadcaster_ID
+        smart_crop_image(image_dir + broadcaster_ID, image_filename, image_hash_filename)
         return
 
 if __name__ == '__main__':
