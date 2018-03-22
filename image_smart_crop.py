@@ -100,7 +100,10 @@ def get_epg_listing(broadcaster_ID, image_dir):
         images_listing_json = json.loads(images_listing_json)
 
     for broadcast in images_listing_json['msg']:
-        image_url = broadcast['teaserImageUrl']
+        if broadcast.has_key('teaserImageUrlOld'):
+            image_url = broadcast['teaserImageUrlOld']
+        else:
+            image_url = broadcast['teaserImageUrl']
         image_filename = get_filename_from_URL(image_url)
         image_hash_filename = rename_to_hash(image_url)
         print 'broadcaster id', broadcaster_ID
