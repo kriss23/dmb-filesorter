@@ -25,11 +25,12 @@ def smart_crop_image(image_dir, input_filename, image_hash_filename, use_16x9=Fa
         input_filename_path = os.path.join(image_dir, input_filename)
     output_filename_path = os.path.join(image_dir, image_hash_filename)
 
-    if os.path.isfile(input_filename_path):
+    if os.path.isfile(input_filename_path) and not os.path.isfile(output_filename_path):
         smart_crop_call = [SMARTCROP_BIN,
                          "--quality", "93",
                          "--width", "852",
                          "--height", "480",
+                         "--minScale", "1.0",
                          input_filename_path,
                          output_filename_path]
         print 'Running:',
@@ -107,7 +108,6 @@ def get_epg_listing(broadcaster_ID, image_dir):
             print 'Ignoring:', image_url
         else:
             smart_crop_image(image_dir + broadcaster_ID, image_filename, image_hash_filename)
-        return
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
