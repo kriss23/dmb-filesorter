@@ -39,7 +39,7 @@ def smart_crop_image(image_dir, input_filename, image_hash_filename, use_16x9=Fa
 
     if os.path.isfile(output_filename_path):
         print "Success"
-    else:
+    elif not use_16x9::
         print "File Missing:", output_filename_path,
         print "retrying with 16/9 version"
         smart_crop_image(image_dir, input_filename, image_hash_filename, use_16x9=True)
