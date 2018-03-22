@@ -102,7 +102,10 @@ def get_epg_listing(broadcaster_ID, image_dir):
         image_filename = get_filename_from_URL(image_url)
         image_hash_filename = rename_to_hash(image_url)
         print 'broadcaster id', broadcaster_ID
-        smart_crop_image(image_dir + broadcaster_ID, image_filename, image_hash_filename)
+        if not image_filename:
+            print 'Ignoring:', image_url
+        else:
+            smart_crop_image(image_dir + broadcaster_ID, image_filename, image_hash_filename)
         return
 
 if __name__ == '__main__':
