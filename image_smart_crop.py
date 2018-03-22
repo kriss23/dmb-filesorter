@@ -25,17 +25,18 @@ def smart_crop_image(image_dir, input_filename, image_hash_filename, use_16x9=Fa
         input_filename_path = os.path.join(image_dir, input_filename)
     output_filename_path = os.path.join(image_dir, image_hash_filename)
 
-    smart_crop_call = [SMARTCROP_BIN,
-                     "--quality", "93",
-                     "--width", "852",
-                     "--height", "480",
-                     input_filename_path,
-                     output_filename_path]
-    print 'Running:',
-    print ' '.join(smart_crop_call)
+    if os.path.isfile(input_filename_path):
+        smart_crop_call = [SMARTCROP_BIN,
+                         "--quality", "93",
+                         "--width", "852",
+                         "--height", "480",
+                         input_filename_path,
+                         output_filename_path]
+        print 'Running:',
+        print ' '.join(smart_crop_call)
 
-    # render output image
-    subprocess.call(smart_crop_call)
+        # render output image
+        subprocess.call(smart_crop_call)
 
     if os.path.isfile(output_filename_path):
         print "Success"
