@@ -14,19 +14,24 @@ EPG_REQUEST_URL = 'http://freenettv.mixd.tv/epg/%s/15Days/?api_key=d57cb0b3-19a5
 BROADCASTER_LISTING_URL = 'http://freenettv.mixd.tv/broadcasters/?api_key=55d347a9-bb71-feae-04ba-ec5cb675d07a'
 SMARTCROP_BIN = 'smartcrop'
 # smartcrop --quality 93 --width 852 --height 480 input.jpg output.jpg
+# --faceDetection --quality 93
+done_list = []
 
 
 def smart_crop_image(image_dir, input_filename, image_hash_filename, use_16x9=False):
     print "will crop", input_filename, 'and store it to', image_hash_filename
-
+    global done_list
+    
     if use_16x9:
         input_filename_path = os.path.join(image_dir, input_filename) + '_16x9.jpg'
     else:
         input_filename_path = os.path.join(image_dir, input_filename)
     output_filename_path = os.path.join(image_dir, image_hash_filename)
 
-    if os.path.isfile(input_filename_path) and not os.path.isfile(output_filename_path):
+    if os.path.isfile(input_filename_path) and output_filename_path not in done_list and not os.path.isfile(output_filename_path):
+        done_list.append(output_filename_path)
         smart_crop_call = [SMARTCROP_BIN,
+                         "--faceDetection",
                          "--quality", "93",
                          "--width", "852",
                          "--height", "480",
@@ -74,12 +79,17 @@ def get_epg_listing(broadcaster_ID, image_dir):
         broadcaster_listing_json = json.loads(broadcaster_listing_json)
         omnit = False
 
-        for broadcaster in broadcaster_listing_json['msg']:
-            if broadcaster['epgId'] == 'LOK':
+        broadcaster_list = broadcaster_listing_json['msg']
+        broadcaster_list.append({
+            'epgId': 'ZDH',
+            'name': 'ZDF HD'
+        })
+        for broadcaster in broadcaster_list:
+            if broadcaster['epgId'] == 'ARD':
                 omnit = False
 
-            if broadcaster['epgId'] == 'LOK':
-                continue
+            #if broadcaster['epgId'] == 'ARD':
+            #    continue
 
             if omnit:
                 continue
@@ -88,6 +98,7 @@ def get_epg_listing(broadcaster_ID, image_dir):
             sys.stdout.flush()
             get_epg_listing(broadcaster['epgId'], image_dir)
             # time.sleep(60 * 5)
+        images_listing_json = {}  # init as emty dict
     else:
         try:
             # print "op: " + EPG_REQUEST_URL % broadcaster_ID
@@ -97,8 +108,17 @@ def get_epg_listing(broadcaster_ID, image_dir):
             print "ERROR opening ", EPG_REQUEST_URL % broadcaster_ID
             return
         # print "Got broadcasts from", EPG_REQUEST_URL % broadcaster_ID
-        images_listing_json = json.loads(images_listing_json)
+        try:
+            images_listing_json = json.loads(images_listing_json)
+        except ValueError:
+            images_listing_json = {
+                'msg': []
+            }
 
+    if not images_listing_json or not images_listing_json.has_key('msg'):
+        print 'Ignoring missing data from:', broadcaster_ID
+        return
+        
     for broadcast in images_listing_json['msg']:
         if broadcast.has_key('teaserImageUrlOld'):
             image_url = broadcast['teaserImageUrlOld']
