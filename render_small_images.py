@@ -53,16 +53,24 @@ def render_small_image(image_directory, image_filename, image_hash_filename):
     # print 'image_directory: ', image_directory
 
     image_hash = image_hash_filename.split('.')[0]
-    source_file = './' + image_directory + '/' + image_hash_filename
-    target_file = './' + image_directory + '/' + image_hash + '_small.jpg'
+    source_file = '/var/www/html/images/852/' + image_directory + '/' + image_hash_filename
+    target_file = '/var/www/html/images/852/' + image_directory + '/' + image_hash + '_small.jpg'
 
     # print 'source_file: ', source_file
     # print 'target_file: ', target_file
 
+    if '/336/' in source_file or '/broadcaster_defaults/' in source_file:
+        return  # don't convert genre imgs
+    
+    if os.path.isfile(target_file):
+        # print "already done."
+        return
+
+
     # convert example.png -resize 200 example.png
     resize_call = [CONVERT_BIN,
                      source_file,
-                     "-resize", "106",
+                     "-resize", "212",
                      target_file]
     print 'Running:',
     print ' '.join(resize_call),
@@ -101,10 +109,11 @@ def get_epg_listing(broadcaster_ID, image_dir):
         omnit = False
 
         for broadcaster in broadcaster_listing_json['msg']:
-            if broadcaster['epgId'] == 'LOK':
+            if broadcaster['epgId'] == 'CPY':
                 omnit = False
 
-            if broadcaster['epgId'] == 'LOK':
+            # CPY, LOK, 
+            if broadcaster['epgId'] in ['CPY', 'LOK', 'I00', 'a00', 'MSP', 'SDI', None]:
                 continue
 
             if omnit:
@@ -128,6 +137,9 @@ def get_epg_listing(broadcaster_ID, image_dir):
 
     print 'broadcaster id', broadcaster_ID
 
+    if not broadcaster_ID:
+        return
+    
     for broadcast in images_listing_json['msg']:
         if broadcast.has_key('teaserImageUrlOld'):
             image_url = broadcast['teaserImageUrlOld']
@@ -139,7 +151,7 @@ def get_epg_listing(broadcaster_ID, image_dir):
 
         render_small_image(image_directory, image_filename, image_hash_filename)
 
-        return
+        # return
 
         # if not image_filename:
         #     print 'Ignoring:', image_url
