@@ -41,27 +41,42 @@ def get_highlights(xml_string):
 
 def get_ratings(xml_string):
     ratings_dict = {}
-    if '<ratings' in xml_string:
-        ratings_string = xml_string.split('<ratings')[1].split('</ratings>')[0]
-        ratings = ratings_string.split('<werk_rating ')
+    #if '<ratings' in xml_string:
+    #    ratings_string = xml_string.split('<ratings')[1].split('</ratings>')[0]
 
-        for rating in ratings:
-            if 'werk_id="' in rating:
-                title = rating.split('werk_titel="')[1].split('"')[0]
-                creative_work_id = rating.split('werk_id="')[1].split('"')[0]
-                broadcast_id = rating.split('<ausstrahlung dmbext:id="')[1].split('"')[0]
-                genre_ratings = {}
-                for genre_rating in rating.split('dmbext:ratingTyp="'):
-                    if 'dmbext:ratingValue="' in genre_rating:
-                        rating_type = genre_rating.split('"')[0]
-                        rating_value = genre_rating.split('dmbext:ratingValue="')[1].split('"')[0]
-                        genre_ratings[rating_type] = rating_value
+    ratings = []
 
-                ratings_dict[broadcast_id] = {
-                    'title': title,
-                    'creative_work_id': creative_work_id,
-                    'genre_ratings': genre_ratings
-                }
+    if '<ratings' in xml_string or '<dmbext:ratings' in xml_string:
+        # if '<ratings' in xml_string:
+        #     ratings_string = xml_string.split('<ratings')[1].split('</ratings>')[0]
+        if '<dmbext:ratings' in xml_string:
+            ratings_string = xml_string.split('<dmbext:ratings')
+            for rating_string in ratings_string:
+                if 'dmbext:werk_rating' in rating_string:
+                    ratings.append(rating_string.split('</dmbext:ratings')[0])
+                else:
+                    continue
+
+                ratings = rating_string.split('<dmbext:werk_rating ')
+
+                for rating in ratings:
+                    if 'werk_id="' in rating:
+                        title = rating.split('werk_titel="')[1].split('"')[0]
+                        creative_work_id = rating.split('werk_id="')[1].split('"')[0]
+                        # broadcast_id = rating.split('<ausstrahlung dmbext:id="')[1].split('"')[0]
+                        broadcast_id = rating.split('ausstrahlung dmbext:id="')[1].split('"')[0]
+                        genre_ratings = {}
+                        for genre_rating in rating.split('dmbext:ratingTyp="'):
+                            if 'dmbext:ratingValue="' in genre_rating:
+                                rating_type = genre_rating.split('"')[0]
+                                rating_value = genre_rating.split('dmbext:ratingValue="')[1].split('"')[0]
+                                genre_ratings[rating_type] = rating_value
+
+                        ratings_dict[broadcast_id] = {
+                            'title': title,
+                            'creative_work_id': creative_work_id,
+                            'genre_ratings': genre_ratings
+                        }
     #pprint.pprint(ratings_dict)
     return ratings_dict
 
@@ -101,7 +116,9 @@ def handle_highlight_files():
             # print ('highlights', highlights)
             ratings = get_ratings(xml_string)
             save_ratings(ratings)
-            #print ('ratings', ratings)
+
+            import pprint
+            #pprint.pprint (ratings)
 
 
 if __name__ == "__main__":
